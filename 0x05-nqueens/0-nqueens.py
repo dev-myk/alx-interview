@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Modul;e for N Queens.
+Module for N Queens.
 """
 from sys import argv, exit
 
@@ -15,24 +15,24 @@ def solveNQueens(n):
         """Recursively  resolves the N queens problem"""
         if index == len(queens): # n queens have been placed correctly
             res.append(queens[:])
-            return # backtracking
+            return  # backtracking
         for i in range(len(queens)):
             queens[index] = i
-            if valid(index): # pruning
+            if valid(index):  # pruning
                 fs(index + 1)
 
     # check whether nth queens can be placed
     def valid(n):
         """Method that checks if a position in the board is valid"""
         for i in range(n):
-            if abs(queens[i] - queens[n]) == n - i: # same diagonal
+            if abs(queens[i] - queens[n]) == n - i:  # same diagonal
                 return False
-            if queens[i] == queens[n]: # same column
+            if queens[i] == queens[n]:  # same column
                 return False
             return True
 
     def make_all_boards(res):
-        """Method that builds the List that be returned"""
+        """Method that builts the List that be returned"""
         actual_boards = []
         for queens in res:
             board = []
