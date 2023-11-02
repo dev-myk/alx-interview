@@ -2,63 +2,67 @@
 """
 Module for N Queens.
 """
-from sys import argv, exit
+import sys
 
 
-def solveNQueens(n):
-    """Program that places N non-attacking queens on an NxN chessboard"""
-    res = []
-    queens = [-1] * n
-    # index represents row no and value represents col no
+def backtrack(r, n, cols, pos, neg, board):
+    """
+    backtrack function to find solution
+    """
+    if r == n:
+        res = []
+        for l in range(len(board)):
+            for k in range(len(board[1])):
+                if board[l][k] == 1:
+                    res.append([l, k])
+        print(res)
+        return
 
-    def fs(index):
-        """Recursively  resolves the N queens problem"""
-        if index == len(queens): # n queens have been placed correctly
-            res.append(queens[:])
-            return  # backtracking
-        for i in range(len(queens)):
-            queens[index] = i
-            if valid(index):  # pruning
-                fs(index + 1)
+    for c in range(n):
+        if c in cols or (r + c) in pos or (r - c) in neg:
+            continue
 
-    # check whether nth queens can be placed
-    def valid(n):
-        """Method that checks if a position in the board is valid"""
-        for i in range(n):
-            if abs(queens[i] - queens[n]) == n - i:  # same diagonal
-                return False
-            if queens[i] == queens[n]:  # same column
-                return False
-            return True
+        cols.add(c)
+        pos.add(r + c)
+        neg.add(r - c)
+        board[r][c] = 1
 
-    def make_all_boards(res):
-        """Method that builts the List that be returned"""
-        actual_boards = []
-        for queens in res:
-            board = []
-            for row, col in enumerate(queens):
-                board.append([row, col])
-            actual_boards.append(board)
-        return actual_boards
+        backtrack(r+1, n, cols, pos, neg, board)
 
-    fs(0)
-    return make_all_boards(res)
+        cols.remove(c)
+        pos.remove(r + c)
+        neg.remove(r - c)
+        board[r][c] = 0
+
+
+def nqueens(n):
+    """
+    Solution to nqueens problem
+    Args:
+        n (int): number of queens. Must be >= 4
+    Return:
+        List of lists representing coordinates of each
+        queen for all possible solutions
+    """
+    cols = set()
+    pos_diag = set()
+    neg_diag = set()
+    board = [[0] * n for i in range(n)]
+
+    backtrack(0, n, cols, pos_diag, neg_diag, board)
 
 
 if __name__ == "__main__":
-    if len(argv) < 2:
-        print('Usage: nqueens N')
-        exit(1)
+    n = sys.argv
+    if len(n) != 2:
+        print("Usage: nqueens N")
+        sys.exit(1)
     try:
-        n = int(argv[1])
+        nn = int(n[1])
+        if nn < 4:
+            print("N must be at least 4")
+            sys.exit(1)
+        nqueens(nn)
     except ValueError:
-        print('N must be a number')
-        exit(1)
-
-    if n < 4:
-        print('N must be at least 4')
-        exit(1)
-    else:
-        result = solveNQueens(n)
-        for row in result:
-            print(row)
+        print("N must be an integer")
+        sys.exit(1)
